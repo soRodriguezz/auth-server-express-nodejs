@@ -6,6 +6,7 @@ const {
   renovarToken,
 } = require("../controllers/auth.controller");
 const { validarCampos } = require("../middlewares/validar-campos");
+const { validaJWT } = require("../middlewares/validar-jwt");
 
 const router = Router();
 
@@ -39,6 +40,6 @@ router.post(
 );
 
 // Revalidar token
-router.get("/renovar", renovarToken);
+router.get("/renovar", validaJWT ,renovarToken);
 
 module.exports = router;

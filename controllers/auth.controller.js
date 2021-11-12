@@ -61,22 +61,60 @@ const crearUsuario =  async ( req, res = response ) => {
 
 };
 
-const loginUsuario = (req, res) => {
+const loginUsuario = async (req, res) => {
 
     const { correo, password } = req.body;
 
-    return res.json({
-        ok: true,
-        msg: 'Login de usuario'
-    });
+    try {
+        
+        const userDB = await Usuario.findOne({ correo });
+
+        // Verificar si el correo existe
+        if ( !userDB ) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El correo no existe'
+            });
+        }
+
+        // Verificar contraseña
+        const validPassword = bcrypt.compareSync(password, userDB.password);
+
+        if ( !validPassword ) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Contraseña incorrecta'
+            });
+        }
+
+        // Generar token
+        const token = await generarJWT(userDB._id, userDB.nombre);
+
+        // Generar respuesta exitosa
+        return res.status(200).json({
+            ok: true,
+            usuario: userDB,
+            token
+        });
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado'
+        });
+    }
 
 };
 
 const renovarToken =  (req, res) => {
     
+    const { uid, nombre } = req; // generado desde el middleware
+
     return res.json({
         ok: true,
-        msg: 'Renew'
+        uid,
+        nombre
     });
 
 };
