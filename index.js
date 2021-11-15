@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config(); // tomar configuracion desde .env
 const { dbConnection } = require("./db/config");
 
@@ -23,7 +24,12 @@ app.use(express.json());
 // Rutas
 app.use("/api/auth", require("./routes/auth.routes"));
 
-// // GET
+// Manejo de rutas
+app.get( '*',( req, res ) => {
+    res.sendFile(path.resolve(__dirname, 'public/index.html'));
+});
+
+// GET
 // app.get('/', (req, res) => {
 //     res.status(200).json({ // puedo cambiar el status de la respuesta
 //         ok: true,
