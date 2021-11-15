@@ -109,14 +109,18 @@ const loginUsuario = async (req, res) => {
 
 const renovarToken = async  (req, res) => {
     
-    const { uid, nombre } = req; // generado desde el middleware
+    const { uid } = req; // generado desde el middleware
 
-    const token = await generarJWT(uid, nombre);
+    // Leer bd para obtener token
+    const userDB = await Usuario.findById(uid);
+
+    const token = await generarJWT(uid, userDB.nombre);
 
     return res.json({
         ok: true,
         uid,
-        nombre,
+        nombre: userDB.nombre,
+        correo: userDB.correo,
         token
     });
 
