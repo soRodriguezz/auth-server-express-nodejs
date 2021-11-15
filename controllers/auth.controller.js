@@ -1,6 +1,6 @@
 
 const { response } = require('express');
-const Usuario = require('../models/Usuario.model');
+const Usuarios = require('../models/Usuario.model');
 const bcrypt = require('bcryptjs');
 const { generarJWT } = require('../helpers/jwt');
 
@@ -10,7 +10,7 @@ const crearUsuario =  async ( req, res = response ) => {
 
     try {
         // Verificar correo
-        let usuario = await Usuario.findOne({ correo });
+        let usuario = await Usuarios.findOne({ correo });
 
         if (usuario) {
             return res.status(400).json({
@@ -20,7 +20,7 @@ const crearUsuario =  async ( req, res = response ) => {
         }
 
         // Crear usuario con el modelo
-        const userBD = new Usuario( req.body );
+        const userBD = new Usuarios( req.body );
 
         // Hashear la contraseña
         const salt = bcrypt.genSaltSync();
@@ -67,7 +67,7 @@ const loginUsuario = async (req, res) => {
 
     try {
         
-        const userDB = await Usuario.findOne({ correo });
+        const userDB = await Usuarios.findOne({ correo });
 
         // Verificar si el correo existe
         if ( !userDB ) {
@@ -112,7 +112,7 @@ const renovarToken = async  (req, res) => {
     const { uid } = req; // generado desde el middleware
 
     // Leer bd para obtener token
-    const userDB = await Usuario.findById(uid);
+    const userDB = await Usuarios.findById(uid);
 
     const token = await generarJWT(uid, userDB.nombre);
 
